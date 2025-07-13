@@ -1,0 +1,75 @@
+{
+    "extends": [
+      "next/core-web-vitals",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:react/recommended",
+      "plugin:tailwindcss/recommended",
+      "prettier"
+    ],
+    "plugins": ["@typescript-eslint", "react", "import", "sort-keys-fix"],
+    "settings": {
+      "react": {
+        "version": "detect"
+      }
+    },
+    "parserOptions": {
+      "project": "./tsconfig.json"
+    },
+    "rules": {
+      "no-console": ["warn", { "allow": ["error", "warn"] }],
+      // Import sorting
+      "import/order": [
+        "warn",
+        {
+          "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
+          "newlines-between": "always",
+          "alphabetize": {
+            "order": "asc"
+          }
+        }
+      ],
+      // React specific rules
+      "react/react-in-jsx-scope": "off",
+      "react/prop-types": "off",
+      "react/jsx-sort-props": [
+        "error",
+        {
+          "callbacksLast": true,
+          "shorthandFirst": true,
+          "ignoreCase": true,
+          "reservedFirst": true
+        }
+      ],
+      // TypeScript rules
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          "argsIgnorePattern": "^_",
+          "varsIgnorePattern": "^_",
+          "ignoreRestSiblings": true
+        }
+      ],
+      "tailwindcss/no-custom-classname": "off",
+      "@typescript-eslint/no-explicit-any": "warn",
+      // Code style
+      "max-len": [
+        "error",
+        {
+          "code": 125,
+          "ignoreStrings": true,
+          "ignoreTemplateLiterals": true,
+          "ignoreComments": true
+        }
+      ],
+      "sort-keys-fix/sort-keys-fix": "warn"
+    },
+    "overrides": [
+      {
+        "files": ["*.ts", "*.tsx"],
+        "parserOptions": {
+          "project": "./tsconfig.json"
+        }
+      }
+    ]
+  }
+  

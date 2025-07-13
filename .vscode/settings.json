@@ -1,0 +1,27 @@
+{
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.fixAll.stylelint": "never"
+    },
+    "files.insertFinalNewline": true,
+    "[typescriptreact]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "typescript.preferences.importModuleSpecifier": "project-relative",
+    "windsurf.marketplaceExtensionGalleryServiceURL": "https://marketplace.visualstudio.com/_apis/public/gallery",
+    "windsurf.marketplaceGalleryItemURL": "https://marketplace.visualstudio.com/item",
+    "tailwindCSS.classAttributes": [
+      "className",
+      "style"
+    ],
+    "tailwindCSS.experimental.classRegex": [
+      "tw`([^`]*)",
+      [
+        "tw.style\\(([^)]*)\\)",
+        "'([^']*)'"
+      ]
+    ]
+  }
+  
