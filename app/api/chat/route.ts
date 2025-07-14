@@ -1,5 +1,15 @@
-import { openai } from '@ai-sdk/openai'
+import { OpenAI } from 'openai'
+import { openai as openAiStream } from '@ai-sdk/openai'
+import { createClient } from '@supabase/supabase-js'
+
 import { streamText } from 'ai'
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY!,
+})
+
+// Supabase client
+const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
 
 export async function POST(req: Request) {
   try {
@@ -7,31 +17,54 @@ export async function POST(req: Request) {
     const { messages } = await req.json()
     const userMessage = messages[messages.length - 1].content
 
-    // Get AI response using streamText
-    const aiResponse = streamText({
-      model: openai('gpt-4o'),
-      prompt: userMessage,
+    // Get embedding for user query
+    const embeddingResponse = await openai.embeddings.create({
+      input: userMessage,
+      model: 'text-embedding-3-small',
+    })
+    const userQueryEmbedding = embeddingResponse.data[0].embedding
+
+    // Call Supabase vector function
+    const { data: matchedCompanies } = await supabase.rpc('chatbot_company_matcher', {
+      user_query_embedding: userQueryEmbedding,
+      match_count: 7,
+      match_threshold: 0.9,
     })
 
-    // Get AI response using streamObject
-    // const result = await streamObject({
-    //   model: openai('gpt-4-turbo'),
-    //   schema: z.object({
-    //     recipe: z.object({
-    //       name: z.string(),
-    //       ingredients: z.array(z.string()),
-    //       steps: z.array(z.string()),
-    //     }),
-    //   }),
-    //   prompt: userMessage,
-    // })
+    // Format companies for the response
+    const formattedCompanies = (matchedCompanies || []).map((company: any) => ({
+      id: company.company_id,
+      content: company.content,
+      similarity: company.similarity_score,
+    }))
 
-    // for await (const partialObject of partialObjectStream) {
-    //   console.clear()
-    //   console.log(partialObject)
-    // }
+    // Get AI response with the formatted companies as context
+    const result = await streamText({
+      model: openAiStream.chat('gpt-4o'),
+      messages: [
+        {
+          role: 'system',
+          content: `You are a helpful assistant that provides information about companies. 
+          Use the following company information to answer the user's query. 
+          If no companies are found, politely inform the user.
+          
+         If a user asks about unrelated topics (e.g., weather, personal advice, current events), politely redirect them by saying you can only assist with company-related questions. 
+         Do not attempt to answer questions outside this scope.            
+          `,
+        },
+        {
+          role: 'user',
+          content: `User query: ${userMessage}
+          
+          Company information:
+          ${JSON.stringify(formattedCompanies, null, 2)}`,
+        },
+      ],
+      temperature: 0.7,
+    })
 
-    return aiResponse.toDataStreamResponse()
+    // Return the response in the format expected by useChat
+    return result.toDataStreamResponse()
   } catch (error) {
     console.error('Error parsing request:', error)
     return new Response('Error parsing request', { status: 400 })
