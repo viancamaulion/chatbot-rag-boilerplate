@@ -6,7 +6,7 @@ import ReactMarkdown from 'react-markdown'
 import { initialMessage } from '@/lib/utils/initialMessage'
 
 export default function ChatContent() {
-  const { messages, handleInputChange, handleSubmit } = useChat({
+  const { messages, handleInputChange, handleSubmit, input } = useChat({
     api: '/api/chat',
     initialMessages: [
       {
@@ -23,12 +23,12 @@ export default function ChatContent() {
   }
 
   const RoleLabel = (role: string) => {
-    return <text className="text-black text-sm ">{role === 'assistant' ? 'Assistant:' : 'You:'}</text>
+    return <p className="text-black text-sm ">{role === 'assistant' ? 'Assistant:' : 'You:'}</p>
   }
 
   return (
-    <div className="flex flex-col size-full pb-16 pt-3 px-2">
-      <div className="h-[calc(100vh-24rem)] px-3">
+    <div className="flex flex-col size-full pt-3 px-2">
+      <div className="h-[calc(100vh-24rem)] px-3 overflow-y-auto">
         {messages.map((message) => (
           <div key={message.id} className={`w-fit ${message.role === 'user' ? 'ml-auto' : ''}`}>
             {RoleLabel(message.role)}
@@ -53,6 +53,7 @@ export default function ChatContent() {
             className="w-full rounded-full border border-zinc-300 p-3 text-sm shadow-xl dark:border-zinc-800 dark:bg-white text-black"
             placeholder="Enter your job vacancy, or ask about agencies, locations, or specialties..."
             onChange={handleInputChange}
+            value={input}
           />
           <button type="submit">
             <ArrowRightIcon />
