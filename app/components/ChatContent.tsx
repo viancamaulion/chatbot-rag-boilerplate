@@ -28,7 +28,7 @@ export default function ChatContent() {
 
   return (
     <div className="flex flex-col size-full pt-3 px-2">
-      <div className="h-[calc(100vh-24rem)] px-3 overflow-y-auto">
+      <div className="h-[calc(100vh-24rem)] px-3 mb-9 overflow-y-auto">
         {messages.map((message) => (
           <div key={message.id} className={`w-fit ${message.role === 'user' ? 'ml-auto' : ''}`}>
             {RoleLabel(message.role)}

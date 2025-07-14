@@ -13,6 +13,24 @@ export async function POST(req: Request) {
       prompt: userMessage,
     })
 
+    // Get AI response using streamObject
+    // const result = await streamObject({
+    //   model: openai('gpt-4-turbo'),
+    //   schema: z.object({
+    //     recipe: z.object({
+    //       name: z.string(),
+    //       ingredients: z.array(z.string()),
+    //       steps: z.array(z.string()),
+    //     }),
+    //   }),
+    //   prompt: userMessage,
+    // })
+
+    // for await (const partialObject of partialObjectStream) {
+    //   console.clear()
+    //   console.log(partialObject)
+    // }
+
     return aiResponse.toDataStreamResponse()
   } catch (error) {
     console.error('Error parsing request:', error)
