@@ -9,29 +9,29 @@ const openai = new OpenAI({
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
 
 async function generateAgencyEmbeddings() {
-  const { data: agencies } = await supabase.from('agencies').select('*')
+  const { data: companies } = await supabase.from('companies').select('*')
 
-  if (!agencies) {
-    console.log('No agencies found')
+  if (!companies) {
+    console.log('No companies found')
     return
   }
 
-  for (const agency of agencies) {
+  for (const company of companies) {
     const content = JSON.stringify({
-      agency_id: agency.id,
-      business_email: agency.business_email,
-      country: agency.country ?? '',
-      description: agency.description ?? '',
-      employee_count: agency.employee_count,
-      logo: agency.logo,
-      name: agency.name,
-      phone_number: agency.phone_number,
-      slug: agency.slug,
-      specializations: agency.specializations ?? [],
-      state: agency.state ?? '',
-      status: agency.status,
-      tagline: agency.tagline ?? '',
-      year_founded: agency.year_founded,
+      company_id: company.id,
+      business_email: company.business_email,
+      country: company.country ?? '',
+      description: company.description ?? '',
+      employee_count: company.employee_count,
+      logo: company.logo,
+      name: company.name,
+      phone_number: company.phone_number,
+      slug: company.slug,
+      specializations: company.specializations ?? [],
+      state: company.state ?? '',
+      tagline: company.tagline ?? '',
+      year_founded: company.year_founded,
+      website: company.website,
     })
 
     const embeddingResponse = await openai.embeddings.create({
@@ -40,18 +40,18 @@ async function generateAgencyEmbeddings() {
     })
 
     const [{ embedding }] = embeddingResponse.data
-    await supabase.from('agency_embeddings').upsert(
+    await supabase.from('company_embeddings').upsert(
       {
-        agency_id: agency.id,
+        company_id: company.id,
         content,
         embedding,
       },
       {
-        onConflict: 'agency_id',
+        onConflict: 'company_id',
       },
     )
   }
-  console.log('✅ Agency embeddings created and stored.')
+  console.log('✅ Company embeddings created and stored.')
 }
 
 async function run() {

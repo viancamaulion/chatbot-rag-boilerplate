@@ -3,7 +3,7 @@
 import { useChat } from '@ai-sdk/react'
 import { ArrowRightIcon } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
-import { initialMessage } from '@/utils/initialMessage'
+import { initialMessage } from '@/lib/utils/initialMessage'
 
 export default function ChatContent() {
   const { messages, handleInputChange, handleSubmit } = useChat({
