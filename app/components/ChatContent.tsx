@@ -6,6 +6,7 @@ import ReactMarkdown from 'react-markdown'
 import { initialMessage } from '@/lib/utils/initialMessage'
 
 export default function ChatContent() {
+  // Hint: Utilize the unused variables
   const { messages, handleInputChange, handleSubmit, input } = useChat({
     api: '/api/chat',
     initialMessages: [
@@ -19,7 +20,6 @@ export default function ChatContent() {
 
   const handleSubmitChat = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    handleSubmit(e)
   }
 
   const RoleLabel = (role: string) => {
@@ -51,9 +51,9 @@ export default function ChatContent() {
         <div className="flex items-center gap-2 absolute bottom-0 left-0 w-full p-3">
           <input
             className="w-full rounded-full border border-zinc-300 p-3 text-sm shadow-xl dark:border-zinc-800 dark:bg-white text-black"
-            placeholder="Enter your job vacancy, or ask about agencies, locations, or specialties..."
-            onChange={handleInputChange}
-            value={input}
+            placeholder="Ask about companies.."
+            value={'Hello'}
+            onChange={() => {}}
           />
           <button type="submit">
             <ArrowRightIcon />

@@ -17,7 +17,7 @@ export async function POST(req: Request) {
     const { messages } = await req.json()
     const userMessage = messages[messages.length - 1].content
 
-    // Get embedding for user query
+    // Get embedding for user's message
     const embeddingResponse = await openai.embeddings.create({
       input: userMessage,
       model: 'text-embedding-3-small',
@@ -38,33 +38,11 @@ export async function POST(req: Request) {
       similarity: company.similarity_score,
     }))
 
-    // Get AI response with the formatted companies as context
-    const result = await streamText({
-      model: openAiStream.chat('gpt-4o'),
-      messages: [
-        {
-          role: 'system',
-          content: `You are a helpful assistant that provides information about companies. 
-          Use the following company information to answer the user's query. 
-          If no companies are found, politely inform the user.
-          
-         If a user asks about unrelated topics (e.g., weather, personal advice, current events), politely redirect them by saying you can only assist with company-related questions. 
-         Do not attempt to answer questions outside this scope.            
-          `,
-        },
-        {
-          role: 'user',
-          content: `User query: ${userMessage}
-          
-          Company information:
-          ${JSON.stringify(formattedCompanies, null, 2)}`,
-        },
-      ],
-      temperature: 0.7,
-    })
+    // Get AI response with the formatted companies as context using streamText
+    //...
 
-    // Return the response in the format expected by useChat
-    return result.toDataStreamResponse()
+    // Return the response in the format expected by useChat using toDataStreamResponse()
+    //...
   } catch (error) {
     console.error('Error parsing request:', error)
     return new Response('Error parsing request', { status: 400 })

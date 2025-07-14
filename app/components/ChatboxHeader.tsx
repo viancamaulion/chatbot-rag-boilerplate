@@ -6,8 +6,8 @@ export default function ChatboxHeader() {
       <div className="flex items-center gap-2">
         <BotIcon />
         <div className="flex flex-col">
-          <h1 className="text-sm font-semibold">PARKER</h1>
-          <h2 className="text-xs">AI FINDER - RECRUITMENT ASSISTANT</h2>
+          <h1 className="text-sm font-semibold">BLITZ</h1>
+          <h2 className="text-xs">COMPANY FINDER - ASSISTANT</h2>
         </div>
       </div>
     </div>
