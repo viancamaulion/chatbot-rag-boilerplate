@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate:embeddings": "tsx lib/scripts/generateAgencyEmbeddings.ts"
+    "generate:embeddings": "tsx lib/scripts/generateCompanyEmbeddings.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.3.23",

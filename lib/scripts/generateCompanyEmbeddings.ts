@@ -1,14 +1,12 @@
 import 'dotenv/config'
 import { createClient } from '@supabase/supabase-js'
-import OpenAI from 'openai'
+import { embedMany } from 'ai'
+import { openai } from '@ai-sdk/openai'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-})
-
+// Set up our Supabase Client
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
 
-async function generateAgencyEmbeddings() {
+async function generateCompanyEmbeddings() {
   const { data: companies } = await supabase.from('companies').select('*')
 
   if (!companies) {
@@ -16,8 +14,9 @@ async function generateAgencyEmbeddings() {
     return
   }
 
-  for (const company of companies) {
-    const content = JSON.stringify({
+  // 1. Prepare content strings for embedding
+  const contents = companies.map((company) =>
+    JSON.stringify({
       company_id: company.id,
       business_email: company.business_email,
       country: company.country ?? '',
@@ -32,30 +31,33 @@ async function generateAgencyEmbeddings() {
       tagline: company.tagline ?? '',
       year_founded: company.year_founded,
       website: company.website,
-    })
+    }),
+  )
 
-    const embeddingResponse = await openai.embeddings.create({
-      input: content,
-      model: 'text-embedding-3-small',
-    })
+  // 2. Batch embed using embedMany
+  const { embeddings } = await embedMany({
+    model: openai.embedding('text-embedding-3-small'),
+    values: contents,
+  })
 
-    const [{ embedding }] = embeddingResponse.data
-    await supabase.from('company_embeddings').upsert(
-      {
-        company_id: company.id,
-        content,
-        embedding,
-      },
-      {
-        onConflict: 'company_id',
-      },
-    )
-  }
+  // 3. Upsert into Supabase
+
+  // Prepare list of objects to be inserted in the vector store
+  const upserts = companies.map((company, i) => ({
+    company_id: company.id,
+    content: contents[i],
+    embedding: embeddings[i],
+  }))
+
+  await supabase.from('company_embeddings').upsert(upserts, {
+    onConflict: 'company_id',
+  })
+
   console.log('✅ Company embeddings created and stored.')
 }
 
 async function run() {
-  await generateAgencyEmbeddings()
+  await generateCompanyEmbeddings()
 }
 
 run().catch(console.error)
