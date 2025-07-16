@@ -20,7 +20,7 @@ export default function ChatContent() {
 
   const handleSubmitChat = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    handleSubmit(e)
+    //..
   }
 
   const RoleLabel = (role: string) => {
@@ -53,8 +53,8 @@ export default function ChatContent() {
           <input
             className="w-full rounded-full border border-zinc-300 p-3 text-sm shadow-xl dark:border-zinc-800 dark:bg-white text-black"
             placeholder="Ask about companies.."
-            value={input}
-            onChange={handleInputChange}
+            value={'Hello'}
+            onChange={() => {}}
           />
           <button type="submit">
             <ArrowRightIcon />
