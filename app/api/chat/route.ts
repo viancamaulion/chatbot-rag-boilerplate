@@ -8,19 +8,33 @@ const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env
 
 export async function POST(req: Request) {
   try {
-    // Get user's message
+    // 1. Get user's message
     const { messages } = await req.json()
     const userMessage = messages[messages.length - 1].content
 
-    // Get embedding for user's message for the matcher function
+    // 2. Get embedding for user's message for the matcher function. Model: openai.embedding('text-embedding-3-small')
+    //..
 
-    // Call Supabase matcher function
+    // 3. Call Supabase matcher function
+    //..
 
-    // Hint: Use formatted companies as context for the user's prompt
+    // 4a. Hint: Use formatted companies as context for the user's prompt
+    const formattedCompanies = [].map((company: any) => {
+      return {
+        name: company.name,
+        content: company.content,
+        similarity: company.similarity_score,
+      }
+    })
 
-    // Get AI response using the matched company data as context
+    // 4b. Stringify the formattedCompanies array to be easily understood by the LLM
+    const stringifiedCompanies = JSON.stringify(formattedCompanies, null, 2)
 
-    // Return the response in the format expected by useChat
+    // 5. Get AI response. Inject the stringified companies as context
+    //..
+
+    // 6. Return the response in the format expected by useChat
+    //..
   } catch (error) {
     console.error('Error parsing request:', error)
     return new Response('Error parsing request', { status: 400 })
