@@ -7,6 +7,8 @@ import { streamText } from 'ai'
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
 
 export async function POST(req: Request) {
+  // RAG Integration Reference: Slide #23
+
   try {
     // 1. Get user's message
     const { messages } = await req.json()
